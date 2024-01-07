@@ -6,7 +6,7 @@ from dataloader import PolypDatasetLoader
 
 def folder_creation(dest_dir, args):
     os.makedirs(dest_dir, exist_ok=True)
-    time = datetime.now().strftime("%H_%M_%S")
+    time = datetime.datetime.now().strftime("%H_%M_%S")
     dest_dir = dest_dir + time + "_" + args.name + "/"
     os.makedirs(dest_dir, exist_ok=True)
 
