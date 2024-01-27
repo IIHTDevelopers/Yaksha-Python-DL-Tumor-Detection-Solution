@@ -1,0 +1,7 @@
+pytorch
+opencv-python
+opencv-python-headless
+numpy
+pandas
+pathlib
+scikit-learn
