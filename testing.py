@@ -1,4 +1,4 @@
-import torch, os, cv2, shutil
+import torch, os, cv2
 from torch import nn
 from dataloader import PolypDatasetLoader
 from loss import DiceBCELoss
@@ -7,7 +7,6 @@ from model import CompNet
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from sklearn.metrics import jaccard_score as jsc
-from test_functional import server_tests
 
 
 class Test(nn.Module):
@@ -52,6 +51,8 @@ class Test(nn.Module):
     
 
     def __save_image_func(self, image_tensor, save_dir, name, counter):
+        # print(image_tensor.shape)
+        # image_tensor = torch.squeeze(image_tensor, 0)
         try:
             image_tensor = torch.permute(image_tensor, (1,2,0))
         except:
@@ -106,15 +107,13 @@ class Test(nn.Module):
                 dice_score, jc = self.__metric_calculation(pred, mask)
                 epoch_jc += jc
                 epoch_dice += dice_score
-        return (epoch_loss/len(self.val_dataloader), epoch_jc/len(self.val_dataloader), epoch_dice/len(self.val_dataloader), mask.detach().cpu().numpy(), pred.detach().cpu().numpy())
+        return (epoch_loss/len(self.val_dataloader), epoch_jc/len(self.val_dataloader), epoch_dice/len(self.val_dataloader))
 
 
 def test_helper(root_dir, image_dir, mask_dir, model_path, dest_folder):
     print("Making directory")
     save_dir = dest_folder + "/"
-    if os.path.exists(save_dir):
-        shutil.rmtree(save_dir)
-    os.makedirs(save_dir)
+    os.makedirs(save_dir, exist_ok=True)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     test = Test(device)
     print("Loading model")
@@ -122,21 +121,18 @@ def test_helper(root_dir, image_dir, mask_dir, model_path, dest_folder):
     print("Loading dataset")
     test.load_dataset(root_dir, image_dir, mask_dir)
     print("Testing model on images")
-    loss, jc, dice, mask, pred = test.test(save_dir)
+    loss, jc, dice = test.test(save_dir)
     print("Loss: {}\tJC: {}\t\tDice Cofficient: {}".format(loss, jc, dice))
     print("Saving metric values")
     with open(save_dir + "loss_metrics.txt", "w") as file:
         file.write("Loss: {}\tJC: {}\t\tDice Cofficient: {}".format(loss, jc, dice))
+    print("Test Upload")
     if jc > 0.8 and dice > 0.8:
         print("model is good")
     else:
         print("model is not good")
-    
-    print("Uploading Test results to server")
-    server_tests(model_path, mask, pred, jc, dice)
-
 
 
 
 if __name__ == "__main__":
-    test_helper(root_dir="test-images/", image_dir="images", mask_dir="masks", model_path="results/model.pt", dest_folder = "test_results/")
+    test_helper(root_dir="test-images/", image_dir="images", mask_dir="masks", model_path="saved_models/model_106.pt", dest_folder = "results/")

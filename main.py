@@ -7,7 +7,7 @@ def main():
     args = arguments.get_arguments()
     ## folder creation
     dest_dir = "results/"
-    utils.folder_creation(dest_dir)
+    utils.folder_creation(dest_dir, args)
     ## splitting data
     save_loc = utils.splitting_data(args)
     ## dataloader

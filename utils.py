@@ -1,13 +1,14 @@
-import os, splitfolders, shutil
+import os, datetime, splitfolders
 from pathlib import Path
 from torch.utils.data import DataLoader
 from dataloader import PolypDatasetLoader
 
 
-def folder_creation(dest_dir):
-    if os.path.exists(dest_dir):
-        shutil.rmtree(dest_dir)
-    os.makedirs(dest_dir, exist_ok=False)
+def folder_creation(dest_dir, args):
+    os.makedirs(dest_dir, exist_ok=True)
+    time = datetime.now().strftime("%H_%M_%S")
+    dest_dir = dest_dir + time + "_" + args.name + "/"
+    os.makedirs(dest_dir, exist_ok=True)
 
 
 def splitting_data(args):

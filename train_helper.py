@@ -33,11 +33,9 @@ class TrainHelper:
             self.scheduler.step(val_loss)
             if val_loss < val_loss_min:
                 val_loss_min = val_loss
-                self.training_module.save(dest_dir + "/model.pt".format(int(epoch)))
-                with open(dest_dir + "/model_min_val_loss.txt", "a") as f:
-                    f.write("Epoch {} -> {}\n".format(int(epoch), val_loss))
+                self.training_module.save(dest_dir + "/model_min_{}.pt".format(int(epoch)))
             # data entry and saving
             self.df.loc[len(self.df.index)] = [int(epoch), train_loss, train_jc, train_dice, val_loss, val_jc, val_dice]
             self.df.to_csv(dest_dir + "/loss.csv", index = False)
 
-        # self.training_module.save(dest_dir + "/model.pt")
+        self.training_module.save(dest_dir + "/model.pt")
