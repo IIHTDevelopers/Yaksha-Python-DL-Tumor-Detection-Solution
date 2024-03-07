@@ -1,0 +1,83 @@
+Find the length of the longest balanced parenthesis in a string
+Given a string consisting of opening and closing parenthesis, find the length of the longest balanced parenthesis in it.
+
+For example, the longest balanced parenthesis is highlighted in the following expressions:
+
+
+((()()
+(()())(()
+(((()
+((((
+()()
+
+
+
+import java.util.Scanner;
+import java.util.Stack;
+
+public class Main {
+
+    public static int findMaxLen(String str) {
+        if (str == null) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int len = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if (stack.empty()) {
+                    stack.push(i);
+                    continue;
+                }
+                int curr_len = i - stack.peek();
+                if (len < curr_len) {
+                    len = curr_len;
+                }
+            }
+        }
+
+        return len;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        System.out.println(findMaxLen(input));
+    }
+}
+
+
+--------------------
+Inp -1
+(()())(()
+Out - 1
+6
+--------------------
+Inp -1
+()()
+Out - 1
+4
+--------------------
+Inp -1
+((((
+Out - 1
+0
+
+--------------------
+Inp -1
+(((()2
+Out - 1
+2
+
+--------------------
+Inp -1
+((()()
+Out - 1
+4
+
+
