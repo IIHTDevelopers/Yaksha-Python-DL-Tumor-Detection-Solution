@@ -5,4 +5,4 @@ numpy
 pandas
 pathlib
 split-folders
-scikit-learn
+scikit-learnn
